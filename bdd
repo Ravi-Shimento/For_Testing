@@ -104,3 +104,27 @@ FAILURE CONDITION
 
 ======================
 BEGIN OUTPUT NOW.
+
+
+PATH, QUERY & HEADER PARAMETER RULES (STRICT):
+
+1. ALL path parameters MUST be replaced with realistic mock values.
+   Placeholder syntax such as {id}, {userId}, {orderId} is STRICTLY FORBIDDEN.
+
+2. ALL query parameters MUST use realistic mock values.
+
+3. ALL required headers MUST be explicitly provided with mock values
+   (e.g., Authorization, X-Request-Id, Content-Type).
+
+4. If ANY placeholder remains in an endpoint, the output is INVALID
+   and MUST NOT be produced.
+
+MOCK DATA CONSISTENCY RULES:
+
+- Use stable, deterministic mock values.
+- Use the SAME mock value for the SAME parameter across all scenarios.
+
+Examples:
+- userId → "user123"
+- cartId → "cart456"
+- orderId → "order789"
