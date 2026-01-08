@@ -37,3 +37,27 @@ export async function readBDDTestResources(
   walk(targetDir);
   return files;
 }
+
+// ADD this before axios.post
+const bddResources = await readBDDTestResources(workspacePath);
+
+
+// ADD bdd_resources to request body
+const response = await axios.post(
+  `${getBaseApi()}/testgenie/executebdd`,
+  {
+    feature_text,
+    specContent,
+    env: envContent,
+
+    // 👇 NEW
+    bdd_resources: bddResources
+  },
+  {
+    headers: getAuthHeaders(authToken),
+    signal: options?.signal,
+    maxBodyLength: Infinity,
+    maxContentLength: Infinity
+  }
+);
+
