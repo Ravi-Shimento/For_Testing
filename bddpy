@@ -1,0 +1,28 @@
+judge_feedback = getattr(state, "judge_feedback", None)
+
+if judge_feedback:
+    human_content = f"""
+Refine the existing BDD Gherkin scenarios using ONLY the following feedback.
+
+Feedback:
+{judge_feedback}
+
+OpenAPI Specification:
+{openapi_spec}
+
+Existing BDD Scenarios:
+{state.feature_text}
+
+Do not change scenarios that are not mentioned in the feedback.
+"""
+else:
+    human_content = f"""
+Your job is to convert the given OpenAPI 3.0 specification into comprehensive BDD Gherkin test scenarios.
+
+{openapi_spec}
+"""
+
+messages = [
+    SystemMessage(content=rendered_prompt),
+    HumanMessage(content=human_content)
+]
