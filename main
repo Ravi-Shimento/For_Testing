@@ -1,0 +1,79 @@
+@dataclass
+class GraphState:
+    analysis: Optional[str] = None
+    feature_text: Optional[str] = None
+
+    # NEW (for feedback loop)
+    judge_status: Optional[str] = None        # PASS / FAIL
+    judge_confidence: Optional[float] = None
+    judge_feedback: Optional[list] = None
+
+    html_report: Optional[str] = None
+    xml_report: Optional[str] = None
+
+
+class BDDScenarioJudgeNode:
+    async def __call__(self, state: GraphState):
+
+        response = await call_llm(
+            system_prompt=SCENARIO_JUDGE_SYSTEM_PROMPT,
+            user_prompt=f"""
+OpenAPI Specification:
+{state.analysis}
+
+Generated BDD Scenarios:
+{state.feature_text}
+""",
+            response_format="json"
+        )
+
+        state.judge_status = response.get("status")
+        state.judge_confidence = response.get("confidence", 0.0)
+        state.judge_feedback = response.get("fix_suggestions", [])
+
+        return state
+
+
+
+async def __call__(self, state: GraphState):
+
+    if state.judge_feedback:
+        state.feature_text = generate_bdd(
+            state.analysis,
+            feedback=state.judge_feedback
+        )
+    else:
+        state.feature_text = generate_bdd(state.analysis)
+
+    return state
+
+
+
+analysis_node = CodeAnalysisNode()
+bdd_node = BDDGenerationNode()
+judge_node = BDDScenarioJudgeNode()
+
+state = GraphState()
+state = await analysis_node(state, request)
+
+MAX_RETRIES = 2
+attempt = 0
+
+while attempt < MAX_RETRIES:
+    state = await bdd_node(state)
+    state = await judge_node(state)
+
+    if state.judge_status == "PASS":
+        break
+
+    attempt += 1
+
+return {
+    "openAPI_spec": state.analysis,
+    "feature_text": state.feature_text,
+    "bdd_validation": {
+        "status": state.judge_status,
+        "confidence": state.judge_confidence,
+        "issues": state.judge_feedback
+    }
+}
