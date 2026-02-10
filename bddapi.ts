@@ -49,3 +49,19 @@ window.addEventListener('message', event => {
     }
 });
 
+
+
+// 🔹 Extract Base API URL from spec (if available)
+const specContent = bddProvider.getSpecContent?.();
+
+if (specContent) {
+    const serverUrlFromSpec = extractServerUrl(specContent);
+
+    if (serverUrlFromSpec && BDDPanel.currentPanel) {
+        BDDPanel.currentPanel.setBaseApiUrlFromSpec(serverUrlFromSpec);
+    }
+}
+
+import { BDDPanel } from '../webview/bdd_webview/bddWebViewContent';
+import { extractServerUrl } from '../../utils/api/bddAPI';
+
