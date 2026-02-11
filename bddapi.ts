@@ -46,24 +46,51 @@ private updateSpecServerUrl(newUrl: string) {
         return;
     }
 
-    const specContent = fs.readFileSync(openApiPath, "utf-8");
-    const spec = YAML.parse(specContent);
+    try {
+        const specContent = fs.readFileSync(openApiPath, "utf-8");
+        const spec = YAML.parse(specContent);
 
-    // OpenAPI 3
-    if (spec.servers && spec.servers.length > 0) {
-        spec.servers[0].url = newUrl;
+        // OpenAPI 3
+        if (spec.servers && spec.servers.length > 0) {
+            spec.servers[0].url = newUrl;
+        }
+
+        // Swagger 2
+        if (spec.host) {
+            const urlObj = new URL(newUrl);
+            spec.host = urlObj.host;
+            spec.schemes = [urlObj.protocol.replace(":", "")];
+        }
+
+        fs.writeFileSync(openApiPath, YAML.stringify(spec));
+
+        // ✅ SEND SUCCESS MESSAGE BACK
+        this.panel.webview.postMessage({
+            type: "URL_UPDATED"
+        });
+
+    } catch (err) {
+        console.error("Failed to update spec:", err);
     }
-
-    // Swagger 2
-    if (spec.host) {
-        const urlObj = new URL(newUrl);
-        spec.host = urlObj.host;
-        spec.schemes = [urlObj.protocol.replace(":", "")];
-    }
-
-    fs.writeFileSync(openApiPath, YAML.stringify(spec));
-
-    console.log("Spec URL updated successfully");
 }
+
+
+window.addEventListener('message', (event) => {
+
+
+    if (message.type === "URL_UPDATED") {
+    alert("Base API URL updated successfully ✅");
+}
+
+
+    if (message.type === "URL_UPDATED") {
+    vscode.postMessage({ type: "showInfo", message: "Base API URL updated successfully" });
+}
+
+
+    case "showInfo":
+    vscode.window.showInformationMessage(message.message);
+    break;
+
 
 
