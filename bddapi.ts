@@ -93,4 +93,61 @@ window.addEventListener('message', (event) => {
     break;
 
 
+    <div class="api-input-wrapper">
+    <input
+        id="apiUrl"
+        type="text"
+        placeholder="Base API URL"
+    />
+    <button id="updateUrlBtn" class="tick-btn" title="Update URL">
+        ✓
+    </button>
+</div>
+
+
+    .api-input-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#apiUrl {
+    width: 100%;
+    padding: 8px 32px 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #d0d0d0;
+    font-size: 13px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+#apiUrl:focus {
+    border-color: #007acc;
+}
+
+.tick-btn {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 20px;
+    width: 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007acc;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tick-btn:hover {
+    background-color: #005f99;
+}
+
+
+
 
