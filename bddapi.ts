@@ -1,67 +1,69 @@
-import * as yaml from 'js-yaml';
+<div class="api-config">
+    <input
+        id="apiUrl"
+        type="text"
+        placeholder="Base API URL"
+    />
+    <button id="updateSpecUrl" title="Update Spec URL">✔</button>
 
-function extractServerUrl(specContent: string | null): string | undefined {
-    if (!specContent) return;
+document.getElementById('updateSpecUrl').onclick = () => {
+    const apiUrl = document.getElementById('apiUrl')?.value?.trim();
 
-    try {
-        const spec = yaml.load(specContent) as any;
-
-        if (spec?.servers?.length > 0) {
-            return spec.servers[0].url;
-        }
-
-        if (spec?.host) {
-            const scheme = spec.schemes?.[0] ?? 'https';
-            const basePath = spec.basePath ?? '';
-            return `${scheme}://${spec.host}${basePath}`;
-        }
-    } catch (e) {
-        console.error('Failed to parse spec', e);
+    if (!apiUrl) {
+        alert("Base API URL is empty");
+        return;
     }
-}
 
-
-📍 MODIFY generateBDD() (inside it, before axios call)
-
-const serverUrlFromSpec = extractServerUrl(specContent);
-
-📍 AFTER extracting URL → send to webview
-
-if (serverUrlFromSpec && BDDPanel.currentPanel) {
-    BDDPanel.currentPanel.webview.postMessage({
-        type: 'setBaseApiUrl',
-        baseApiUrl: serverUrlFromSpec
+    vscode.postMessage({
+        type: 'UPDATE_SPEC_URL',
+        apiUrl
     });
+};
+
+
+case "UPDATE_SPEC_URL":
+    this.updateSpecServerUrl(message.apiUrl);
+    break;
+
+
+private updateSpecServerUrl(newUrl: string) {
+    const workspace = vscode.workspace.workspaceFolders?.[0];
+    if (!workspace) {
+        console.log("No workspace open");
+        return;
+    }
+
+    const openApiPath = vscode.Uri.joinPath(
+        workspace.uri,
+        "behavioral_flow_output",
+        "openapi.yaml"
+    ).fsPath;
+
+    const fs = require("fs");
+
+    if (!fs.existsSync(openApiPath)) {
+        console.log("openapi.yaml not found");
+        return;
+    }
+
+    const specContent = fs.readFileSync(openApiPath, "utf-8");
+    const spec = YAML.parse(specContent);
+
+    // OpenAPI 3
+    if (spec.servers && spec.servers.length > 0) {
+        spec.servers[0].url = newUrl;
+    }
+
+    // Swagger 2
+    if (spec.host) {
+        const urlObj = new URL(newUrl);
+        spec.host = urlObj.host;
+        spec.schemes = [urlObj.protocol.replace(":", "")];
+    }
+
+    fs.writeFileSync(openApiPath, YAML.stringify(spec));
+
+    console.log("Spec URL updated successfully");
 }
 
-
-🔴 2. src/commands/webview/bdd_webview/bddWebViewContent.ts
-
-
-window.addEventListener('message', event => {
-    const message = event.data;
-
-    if (message.type === 'setBaseApiUrl') {
-        const input = document.getElementById('apiUrlInput');
-        if (input && !input.value) {
-            input.value = message.baseApiUrl;
-        }
-    }
-});
-
-
-
-// 🔹 Extract Base API URL from spec (if available)
-const specContent = bddProvider.getSpecContent?.();
-
-if (specContent) {
-    const serverUrlFromSpec = extractServerUrl(specContent);
-
-    if (serverUrlFromSpec && BDDPanel.currentPanel) {
-        BDDPanel.currentPanel.setBaseApiUrlFromSpec(serverUrlFromSpec);
-    }
-}
-
-import { BDDPanel } from '../webview/bdd_webview/bddWebViewContent';
-import { extractServerUrl } from '../../utils/api/bddAPI';
 
