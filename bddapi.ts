@@ -188,7 +188,15 @@ window.addEventListener('message', (event) => {
     margin-bottom: 15px;
 }
 
-/* Each row inline */
+/* Container */
+.api-config {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+/* Row layout */
 .form-row {
     display: flex;
     align-items: center;
@@ -225,22 +233,22 @@ window.addEventListener('message', (event) => {
     color: white;
     font-size: 13px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
 }
 
 .send-btn:hover {
     background-color: #005f99;
 }
 
-/* Token wrapper for eye icon */
+/* Token wrapper */
 .token-wrapper {
     position: relative;
     flex: 1;
 }
 
+/* Token input */
 #authTokenInput {
     width: 100%;
-    padding: 8px 35px 8px 10px;
+    padding: 8px 35px 8px 10px; /* space for eye */
     border-radius: 6px;
     border: 1px solid #d0d0d0;
     font-size: 13px;
@@ -251,14 +259,19 @@ window.addEventListener('message', (event) => {
     border-color: #007acc;
 }
 
-/* Eye icon inside input */
-.eye-icon {
+/* Eye icon (FontAwesome) */
+#authTokenIcon {
     position: absolute;
-    right: 10px;
+    right: 12px;
     top: 50%;
     transform: translateY(-50%);
-    cursor: pointer;
     font-size: 14px;
     color: #666;
+    cursor: pointer;
 }
+
+#authTokenIcon:hover {
+    color: #007acc;
+}
+
 
