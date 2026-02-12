@@ -150,4 +150,115 @@ window.addEventListener('message', (event) => {
 
 
 
+<div class="api-config">
+
+    <!-- URL ROW -->
+    <div class="form-row">
+        <label class="inline-label">URL -</label>
+        <input
+            id="apiUrl"
+            type="text"
+            placeholder="Enter Base API URL"
+        />
+        <button id="updateSpecUrl" class="send-btn">
+            Send
+        </button>
+    </div>
+
+    <!-- TOKEN ROW -->
+    <div class="form-row token-row">
+        <label class="inline-label">Token -</label>
+        <div class="token-wrapper">
+            <input
+                id="authTokenInput"
+                type="password"
+                placeholder="Enter Auth Token"
+            />
+            <span id="togglePassword" class="eye-icon">👁</span>
+        </div>
+    </div>
+
+</div>
+
+
+.api-config {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+/* Each row inline */
+.form-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Label */
+.inline-label {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* URL input */
+#apiUrl {
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #d0d0d0;
+    font-size: 13px;
+    outline: none;
+}
+
+#apiUrl:focus {
+    border-color: #007acc;
+}
+
+/* Send button */
+.send-btn {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 6px;
+    background-color: #007acc;
+    color: white;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.send-btn:hover {
+    background-color: #005f99;
+}
+
+/* Token wrapper for eye icon */
+.token-wrapper {
+    position: relative;
+    flex: 1;
+}
+
+#authTokenInput {
+    width: 100%;
+    padding: 8px 35px 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #d0d0d0;
+    font-size: 13px;
+    outline: none;
+}
+
+#authTokenInput:focus {
+    border-color: #007acc;
+}
+
+/* Eye icon inside input */
+.eye-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 14px;
+    color: #666;
+}
 
